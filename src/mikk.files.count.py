@@ -25,7 +25,7 @@ def main():
         path = stack.pop(0)
         data = separate(path)
         stack.extend(data[0])
-        count =+ len(data[1])
+        count += len(data[1])
 
     print(f"\t{count} files")
 
