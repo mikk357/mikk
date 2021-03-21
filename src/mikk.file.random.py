@@ -14,7 +14,14 @@ parser.add_argument(
     const=True,
     default=False,
 )
-
+parser.add_argument(
+    "--rel",
+    dest="relative",
+    help="try to make a path relative",
+    required=False,
+    action="store_true",
+    default=False
+)
 parser.add_argument(
     "--ext",
     dest="exts",
@@ -24,7 +31,6 @@ parser.add_argument(
     type=(lambda s: s.split(",")),
     default=[],
 )
-
 parser.add_argument(
     "--then",
     dest="action",
@@ -36,31 +42,35 @@ parser.add_argument(
 )
 
 
-def main():
+def main() -> int:
     cwd = Path.cwd().resolve()
 
     args = parser.parse_args()
     extensions = {f"{os.extsep}{i}" for i in args.exts.copy()}
 
+    iglob = (cwd.rglob("*.*") if args.deep else cwd.glob("*.*"))
+
     if extensions:
-        def filefilter(file: Path):
-            return file.is_file() and file.suffix in extensions
+        files = tuple(i for i in iglob if i.suffix in extensions)
     else:
-        def filefilter(file: Path):
-            return file.is_file()
-
-    _glob = (cwd.rglob("*.*") if args.deep else cwd.glob("*.*"))
-
-    files = list(filter(filefilter, _glob))
+        files = tuple(iglob)
 
     if files:
         file = random.choice(files)
-        string = str(file).replace(str(cwd), ".", 1)  # 'relative' path
-        print(f"\"{string}\"")
+
+        if args.relative:
+            string = str(file.relative_to(cwd))
+        else:
+            string = str(file)
+
         if args.action is not None:
             cmd = args.action.replace("{}", f"\"{string}\"")
             os.system(cmd)
+        else:
+            print(string)
+
         return 0
+
     else:
         print("not finded any files")
         return 1

@@ -3,11 +3,11 @@ COUNT = 2
 
 
 def bell():
-    print(chr(7), end="\r")
+    print(chr(7), end="", flush=True)
 
 
 def main():
-    for i in range(COUNT):
+    for _ in range(COUNT):
         bell()
 
 

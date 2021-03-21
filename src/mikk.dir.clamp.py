@@ -27,11 +27,17 @@ class Options:
                     self.folders.append(x)
 
 
-def empty(directory: Path):
+def empty(directory: Path) -> bool:
+    """
+        Is directory empty?
+    """
     return next(directory.iterdir(), None) is None
 
 
-def clamp(directory: Path):
+def clamp(directory: Path) -> bool:
+    """
+        Try to rm directory
+    """
     try:
         directory.rmdir()
         print(f"clamp \"{directory}\";")
@@ -40,7 +46,7 @@ def clamp(directory: Path):
         return False
 
 
-def main():
+def main() -> int:
     options = Options()
 
     stack = options.folders.copy()
@@ -60,9 +66,8 @@ def main():
                             stack.append(folder)
                     else:
                         stack.append(some)
-
-    print("DONE")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())

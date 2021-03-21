@@ -38,7 +38,6 @@ def gather(cwd: Path) -> Dict[str, List[Path]]:
 
 def main():
     cwd = Path.cwd().resolve()
-    rel = lambda x, r = str(cwd): str(file).replace(r, ".", 1)
 
     mapped = gather(cwd)
 
@@ -46,7 +45,7 @@ def main():
         if len(files) > 1:
             print(f"hash: [{hash_}]")
             for file in files:
-                print(f"    {rel(file)}")
+                print(f"    {file.relative_to(cwd)}")
 
     return 0
 
