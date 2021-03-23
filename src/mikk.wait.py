@@ -1,5 +1,6 @@
 import time
 import sys
+import random
 
 
 nums = set("0123456789")
@@ -14,7 +15,8 @@ def main():
     if not args:
         return "err: no arguments passed"
 
-    span = 0
+    start = time.time()
+    timespan = 0
     number = 1
 
     _args = args.copy()
@@ -26,22 +28,31 @@ def main():
         if set(arg).issubset(nums):
             number = int(arg)
         elif arg in ("s", "sec", "second", "seconds"):
-            span += number * 1
+            timespan += number * 1
             number = 1
         elif arg in ("m", "min", "minute", "minutes"):
-            span += number * 60
+            timespan += number * 60
             number = 1
         elif arg in ("h", "hour", "hours"):
-            span += number * 3600
+            timespan += number * 3600
             number = 1
         else:
             return f"err: unknown expression: {arg}"
 
-    if span:
-        print(f"waiting for {span} seconds...")
-        time.sleep(span)
+    if timespan:
+
+        end = start + timespan
+        while time.time() < end:
+            diff = end - time.time()
+            h = int(diff // 3600)
+            m = int(diff % 3600 // 60)
+            s = int(diff % 3600 % 60)
+            print(f"{h:0>2}:{m:0>2}:{s:0>2}", end="\r")
+            time.sleep(0.5)
+        print("\n")
         for _ in range(3):
             bell()
+
     else:
         return "err: 0 seconds"
 
