@@ -48,7 +48,11 @@ def main() -> int:
     args = parser.parse_args()
     extensions = {f"{os.extsep}{i}" for i in args.exts.copy()}
 
-    iglob = (cwd.rglob("*.*") if args.deep else cwd.glob("*.*"))
+    iglob = (
+        i
+        for i in (cwd.rglob("*") if args.deep else cwd.glob("*"))
+        if i.is_file()
+    )
 
     if extensions:
         files = tuple(i for i in iglob if i.suffix in extensions)

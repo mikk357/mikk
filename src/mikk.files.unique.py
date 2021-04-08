@@ -1,7 +1,16 @@
-
+from argparse import ArgumentParser
 from typing import List, Dict
 from pathlib import Path
 import hashlib
+
+
+argparser = ArgumentParser()
+argparser.add_argument(
+    "--deep",
+    default=False,
+    action="store_true",
+    help="recursive file scan",
+)
 
 
 CHINK_SIZE = 8388608  # 8MB
@@ -18,19 +27,19 @@ def filehash(file: Path) -> str:
     return _hash.hexdigest()
 
 
-def gather(cwd: Path) -> Dict[str, List[Path]]:
-    """  """
-    mapped = {}
-    gen = (i for i in cwd.glob("*.*") if i.is_file())
+def gather(cwd: Path, deep: bool = False) -> Dict[str, List[Path]]:
+    mapped: Dict[str, List[Path]] = dict()
+    glob_ = (cwd.rglob("*") if deep else cwd.glob("*"))
+    gen = (i for i in glob_ if i.is_file())
     count = 0
 
     for file in gen:
         print(f"[{count: >8} files]", end="\r")
-        _hash = filehash(file)
-        if _hash in mapped:
-            mapped[_hash].append(file)
+        hash_hex = filehash(file)
+        if hash_hex in mapped:
+            mapped[hash_hex].append(file)
         else:
-            mapped[_hash] = [file]
+            mapped[hash_hex] = [file]
         count += 1
     print(f"[{count: >8} files]")
     return mapped
@@ -38,17 +47,28 @@ def gather(cwd: Path) -> Dict[str, List[Path]]:
 
 def main():
     cwd = Path.cwd().resolve()
+    args = argparser.parse_args()
 
-    mapped = gather(cwd)
+    mapped = gather(cwd, args.deep)
+    conflicts = {k: v for k, v in mapped.items() if len(v) > 1}
 
-    for hash_, files in mapped.items():
-        if len(files) > 1:
-            print(f"hash: [{hash_}]")
-            for file in files:
-                print(f"    {file.relative_to(cwd)}")
+    if conflicts:
+        # lol pprint
+        print("{")
+        for k, v in conflicts.items():
+            print(f"    \"{k}\": [")
+            for i in v:
+                print(f"        r\"{i.relative_to(cwd)}\",")
+            print("    ],")
+        print("}")
+    else:
+        print("{}")
 
     return 0
 
 
 if __name__ == '__main__':
-    exit(main())
+    try:
+        exit(main())
+    except Exception as e:
+        exit(f"{e.__class__.__name__}: {e}")

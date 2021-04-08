@@ -5,9 +5,9 @@ from pathlib import Path
 
 
 __doc__ = """
---list                 print all executable files which in PATH
---conflicts            find possible conflicts
---find <str>           search executables with `str` in file name
+ --list                 print all executable files which in PATH
+ --conflicts            find possible conflicts
+ --find <str>           search executables with `str` in file name
 """
 
 
@@ -38,8 +38,8 @@ def main():
     files = [
         j
         for i in path
-        for j in i.glob("*.*")
-        if j.suffix in pathext
+        for j in i.glob("*")
+        if j.is_file() and j.suffix in pathext
     ]
 
     if "--list" in args:

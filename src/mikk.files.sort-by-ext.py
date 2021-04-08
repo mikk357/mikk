@@ -11,7 +11,7 @@ class Main:
             "other": []
         }
 
-        for i in self.cwd.rglob("*.*"):
+        for i in self.cwd.rglob("*"):
             if not i.is_file():
                 continue  # skip non-file
             if i.suffix:

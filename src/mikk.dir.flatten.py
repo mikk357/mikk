@@ -25,7 +25,7 @@ def main():
     files: Set[Path] = set()
 
     for path in paths:
-        iglob = (path.rglob("*.*") if args.deep else path.glob("*.*"))
+        iglob = (path.rglob("*") if args.deep else path.glob("*"))
         for some in iglob:
             if some.is_file() and not some.parent == cwd:
                 files.add(some)

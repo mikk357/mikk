@@ -6,7 +6,7 @@ from pathlib import Path
 CHUNK_SIZE = 4194304  # 4 MB
 
 
-def calc_hash(file: Path) -> str:
+def filehash(file: Path) -> str:
     _hash = hashlib.sha256()
     with file.open("rb") as fp:
         while True:
@@ -30,7 +30,7 @@ def main() -> int:
         if not path.is_file():
             print(F"ERR! \"{path}\" not a file")
             return 1
-        _hash = calc_hash(path)
+        _hash = filehash(path)
         print(F"{_hash} \"{path}\"")
     return 0
 

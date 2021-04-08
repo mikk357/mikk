@@ -4,7 +4,7 @@ from pathlib import Path
 def main():
     cwd = Path.cwd()
 
-    exts = {some.suffix for some in cwd.glob("*.*") if some.is_file()}
+    exts = {some.suffix for some in cwd.glob("*") if some.is_file()}
 
     print(*exts)
 
