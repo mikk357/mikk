@@ -1,8 +1,8 @@
-
-from typing import List, Dict, Union
-from pathlib import Path
-import hashlib
 from argparse import ArgumentParser
+from hashlib import md5, sha1, sha256, sha512
+from pathlib import Path
+from typing import Dict, List, Union
+from datetime import datetime
 
 
 argparser = ArgumentParser()
@@ -24,17 +24,12 @@ argparser.add_argument(
 CHINK_SIZE = 8388608  # 8MB
 
 
-def filehash(file: Path, mode: str = "sha256") -> str:
+def filehash(file: Path, mode=sha256) -> str:
     """
         returns file hash as hex string
     """
-    if mode == "sha256":
-        _hash = hashlib.sha256()
-    elif mode == "md5":
-        _hash = hashlib.md5()
-    else:
-        raise Exception(f"unknown hash {mode}")
 
+    _hash = mode()
     with file.open("rb") as fh:
         while True:
             chunk = fh.read(CHINK_SIZE)
@@ -44,42 +39,51 @@ def filehash(file: Path, mode: str = "sha256") -> str:
     return _hash.hexdigest()
 
 
+def files_from_args(arr: List[str]) -> List[Path]:
+    out: List[Path] = []
+    for i in arr:
+        if "*" in i:
+            out.extend(i for i in Path.cwd().glob(i) if i.is_file())
+            continue
+        path = Path(i)
+        if not path.exists():
+            raise Exception(f"file \"{path}\" not exists")
+        elif not path.is_file():
+            raise Exception(f"object \"{path}\" not a file")
+        else:
+            out.append(path)
+    return out
+
+
 def main() -> Union[int, str]:
     args = argparser.parse_args()
     code = 0
+    cwd = Path.cwd().resolve()
 
     if args.files:
-        files: List[Path] = []
-        for arg in args.files:
-            if arg == "*":
-                files.extend(i for i in Path.cwd().iterdir() if i.is_file())
-                continue
-            path = Path(arg)
-            if not path.exists():
-                raise Exception(f"file \"{path}\" not exists")
-            elif not path.is_file():
-                raise Exception(f"object \"{path}\" not a file")
-            else:
-                files.append(path)
+        files = files_from_args(args.files)
 
         for file in files:
             try:
                 if args.mode == "sha256":
                     name_ = filehash(file)
                 elif args.mode == "md5":
-                    name_ = filehash(file, mode="md5")
-                elif args.mode == "ts":
-                    raise NotImplementedError()
+                    name_ = filehash(file, mode=md5)
+                elif args.mode == "mtime":
+                    name_ = datetime\
+                        .fromtimestamp(file.stat().st_mtime)\
+                        .strftime("%Y-%m-%d_%H-%M-%S")
                 else:
                     raise Exception("invalid renaming mode")
 
-                new_name = file.parent / (name_ + "".join(file.suffix))
-                if new_name == file:
+                file_new = file.parent / (name_ + file.suffix)
+                if file_new == file:
                     continue  # renaming doesn't required
-                if new_name.exists():
-                    raise Exception(f"file \"{new_name}\" already exists")
-                print(f"\"{file}\" -> \"{new_name}\"")
-                file.rename(new_name)
+                print(f"\"{file.relative_to(cwd)}\" -> \"{file_new.relative_to(cwd)}\"")
+                if file_new.exists():
+                    print("error: file already exists")
+                    continue
+                file.rename(file_new)
             except Exception as e:
                 print(
                     "Error during renaming:\n\t"
