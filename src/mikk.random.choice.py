@@ -2,6 +2,7 @@ import sys
 import os
 import stat
 import random
+from typing import List
 
 
 def is_piped() -> bool:
@@ -14,7 +15,7 @@ def is_piped() -> bool:
 
 def main():
     args = sys.argv[1:]
-    variants = []
+    variants: List[str] = []
 
     if is_piped():
         for line in sys.stdin:

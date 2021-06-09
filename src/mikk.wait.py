@@ -1,6 +1,5 @@
 import time
 import sys
-import random
 
 
 nums = set("0123456789")
