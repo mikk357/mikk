@@ -51,15 +51,15 @@ def main(count: int):
 
     connections: List[Tuple[Point, Point, Set[str]]] = []
 
-    index = 1
+    offset = 1
     for i in points:
-        for j in points[index:]:
+        for j in points[offset:]:
             connections.append((i, j, i.words & j.words))
-        index += 1
+        offset += 1
 
     connections = sorted(
         connections,
-        key=lambda x: len(x[2]),
+        key=lambda x: len(x[2]) / min(len(x[0].words), len(x[1].words)),
         reverse=True
     )[:count]
 
