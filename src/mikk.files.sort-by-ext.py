@@ -7,7 +7,7 @@ class Main:
         self.cwd = Path.cwd().resolve()
 
     def gather(self, mkdir: bool = True) -> Dict[Path, List[Path]]:
-        mapped = {
+        mapped: Dict[str, List[Path]] = {
             "other": []
         }
 
@@ -22,14 +22,14 @@ class Main:
             else:
                 mapped["other"].append(i)
 
-        mapped = {(self.cwd / ext): files for ext, files in mapped.items()}
+        out = {(self.cwd / ext): files for ext, files in mapped.items()}
 
         if mkdir:
-            for folder in mapped.keys():
+            for folder in out.keys():
                 if not folder.exists():
                     folder.mkdir()
 
-        return mapped
+        return out
 
     @staticmethod
     def move(old: Path, new: Path):

@@ -7,22 +7,22 @@ import click
 T = TypeVar("T")
 
 translation = str.maketrans({
+    "_": " ",
+    "-": " ",
+    ",": " ",
     "!": " ",
-    "#": " ",
-    "&": " ",
+    ".": " ",
     "'": " ",
     "(": " ",
     ")": " ",
-    "+": " ",
-    ",": " ",
-    "-": " ",
-    ".": " ",
-    ".": " ",
-    "=": " ",
-    "@": " ",
     "[": " ",
     "]": " ",
-    "_": " ",
+    "@": " ",
+    "&": " ",
+    "#": " ",
+    "+": " ",
+    "=": " ",
+    "|": " ",
     "~": " ",
 })
 
@@ -45,7 +45,7 @@ class Point:
 def main(count: int):
 
     points: List[Point] = [
-        Point(i, line)
+        Point(i, line.rstrip())
         for i, line in enumerate(sys.stdin, 1)
     ]
 
@@ -58,8 +58,8 @@ def main(count: int):
         offset += 1
 
     connections = sorted(
-        connections,
-        key=lambda x: len(x[2]) / min(len(x[0].words), len(x[1].words)),
+        filter(lambda x: bool(x[2]), connections),
+        key=lambda x: len(x[2]) / (min(len(x[0].words), len(x[1].words)) or 1),
         reverse=True
     )[:count]
 
