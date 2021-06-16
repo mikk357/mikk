@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from typing import List, Dict
 from pathlib import Path
 import hashlib
@@ -11,14 +11,28 @@ argparser.add_argument(
     action="store_true",
     help="recursive file scan",
 )
+argparser.add_argument(
+    "--quick",
+    default=False,
+    action="store_true",
+    help="read x<=1MB of file to hash",
+)
+
+
+class Args(Namespace):
+    deep: bool
+    quick: bool
 
 
 CHINK_SIZE = 8388608  # 8MB
 
 
-def filehash(file: Path) -> str:
+def filehash(file: Path, args: Args) -> str:
     _hash = hashlib.sha256()
     with file.open("rb") as fh:
+        if args.quick:
+            _hash.update(fh.read(1024 * 1024))  # 1 MB
+            return _hash.hexdigest()
         while True:
             chunk = fh.read(CHINK_SIZE)
             if not chunk:
@@ -27,15 +41,15 @@ def filehash(file: Path) -> str:
     return _hash.hexdigest()
 
 
-def gather(cwd: Path, deep: bool = False) -> Dict[str, List[Path]]:
+def gather(cwd: Path, args: Args) -> Dict[str, List[Path]]:
     mapped: Dict[str, List[Path]] = dict()
-    glob_ = (cwd.rglob("*") if deep else cwd.glob("*"))
+    glob_ = (cwd.rglob("*") if args.deep else cwd.glob("*"))
     gen = (i for i in glob_ if i.is_file())
     count = 0
 
     for file in gen:
         print(f"[{count: >8} files]", end="\r")
-        hash_hex = filehash(file)
+        hash_hex = filehash(file, args)
         if hash_hex in mapped:
             mapped[hash_hex].append(file)
         else:
@@ -47,9 +61,9 @@ def gather(cwd: Path, deep: bool = False) -> Dict[str, List[Path]]:
 
 def main():
     cwd = Path.cwd().resolve()
-    args = argparser.parse_args()
+    args = argparser.parse_args(namespace=Args())
 
-    mapped = gather(cwd, args.deep)
+    mapped = gather(cwd, args)
     conflicts = {k: v for k, v in mapped.items() if len(v) > 1}
 
     if conflicts:
