@@ -16,15 +16,19 @@
 @copy ".\src\mikk.files.exts.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.files.sort-by-ext.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.files.unique.py" ".\build\bin\" > NUL
+@copy ".\src\mikk.fs.py" ".\build\bin\" > NUL
+@copy ".\src\mikk.fs.similar.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.grep.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.lines.similar.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.lines.unique.py" ".\build\bin\" > NUL
+@copy ".\src\mikk.lines.map.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.log.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.md5.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.media.player.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.PATH.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.random.choice.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.sha256.py" ".\build\bin\" > NUL
+@copy ".\src\mikk.shell.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.ts.py" ".\build\bin\" > NUL
 @copy ".\src\mikk.wait.py" ".\build\bin\" > NUL
 

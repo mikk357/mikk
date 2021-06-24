@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
-from hashlib import md5, sha1, sha256, sha512
+from hashlib import md5, sha256
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import List, Union
 from datetime import datetime
 
 
@@ -51,7 +51,7 @@ def files_from_args(arr: List[str]) -> List[Path]:
         elif not path.is_file():
             raise Exception(f"object \"{path}\" not a file")
         else:
-            out.append(path)
+            out.append(path.absolute())
     return out
 
 

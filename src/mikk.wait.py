@@ -24,7 +24,7 @@ def main():
     while _args:
         arg = _args.pop(0).lower()
         # isdigit is dumb
-        if set(arg).issubset(nums):
+        if arg.isdigit() and arg.isascii():
             number = int(arg)
         elif arg in ("s", "sec", "second", "seconds"):
             timespan += number * 1
