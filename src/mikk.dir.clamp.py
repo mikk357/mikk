@@ -56,16 +56,19 @@ def main() -> int:
 
         if empty(folder):
             clamp(folder)
+            continue
 
-        elif options.deep:
-            for some in folder.iterdir():
-                if some.is_dir():
-                    if empty(some):
-                        clamp(some)
-                        if folder not in stack:
-                            stack.append(folder)
-                    else:
-                        stack.append(some)
+        if not options.deep:
+            continue
+
+        for some in folder.iterdir():
+            if some.is_dir():
+                if empty(some):
+                    clamp(some)
+                    if folder not in stack:
+                        stack.append(folder)
+                else:
+                    stack.append(some)
     return 0
 
 

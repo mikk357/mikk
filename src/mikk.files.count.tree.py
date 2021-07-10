@@ -1,12 +1,13 @@
 import os
+from typing import List
 
 
 class Dir:
 
     def __init__(self, path: str) -> None:
         self.path = path
-        self.dirs = []
-        self.files = []
+        self.dirs: List["Dir"] = []
+        self.files: List[str] = []
 
         for r, d, f in os.walk(self.path):
             self.dirs.extend([Dir(os.path.join(r, i)) for i in d])

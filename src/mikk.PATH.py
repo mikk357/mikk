@@ -16,10 +16,10 @@ def main():
     if path is None:
         print("ERROR: no environment variable PATH")
         return 1
-    path = sorted(
+    path = [
         Path(i) for i in path.split(os.pathsep)
         if (i != "")
-    )
+    ]
     # print("path: [\n\t" + "\n\t".join(map(str, path)) + "\n]")
 
     pathext = os.environ.get("PATHEXT")
@@ -64,6 +64,10 @@ def main():
         for file in files:
             if target in file.name:
                 print(f"{file.parent} :: {file.name}")
+
+    elif "--path" in args:
+        for i in path:
+            print(f"{i}")
 
     else:
         print(__doc__)
