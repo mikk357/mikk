@@ -1,4 +1,3 @@
-
 COUNT = 2
 
 
@@ -9,6 +8,7 @@ def bell():
 def main():
     for _ in range(COUNT):
         bell()
+    print()
 
 
 if __name__ == '__main__':
