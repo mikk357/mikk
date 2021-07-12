@@ -33,16 +33,18 @@ def main():
 
     for file in files:
 
-        lines = []
         with open(file, "r", encoding="utf8") as fp:
-            lines = [line.rstrip() for line in fp]
+            lines = list(enumerate(
+                line.rstrip() for line in fp
+            ))
 
         while lines:
-            line = lines.pop(0)
+            index, line = lines.pop(0)
             if not line.startswith(("::", "//", "#")):
-                print(f"execute {line}")
+                print(f"[{index: >2}] {line}")
+                os.system(line)
             else:
-                print(line.rstrip())
+                print(line)
             if lines:
                 input()
 
